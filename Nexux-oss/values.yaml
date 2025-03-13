@@ -11,7 +11,7 @@ service:
   targetPort: 8081
 
 ingress:
-  enabled: false
+  enabled: true
   host: nexus.example.com
   annotations: {}
   tls: []
