@@ -1,5 +1,5 @@
 apiVersion: v2
 name: nexus-oss
+description: A Helm chart for deploying Sonatype Nexus OSS
 version: 0.1.0
-description: A Helm chart for Sonatype Nexus OSS
-type: application
+appVersion: "3.73.0" # Replace with the desired Nexus OSS version
