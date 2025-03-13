@@ -1,11 +1,16 @@
+{{- if .Values.persistence.enabled }}
 apiVersion: v1
 kind: PersistentVolume
 metadata:
-  name: nexus-pv
+  name: {{ include "nexus-oss.fullname" . }}-pv
+  labels:
+    app: {{ include "nexus-oss.name" . }}
 spec:
+  storageClassName: {{ .Values.persistence.storageClass | quote }}
   capacity:
     storage: {{ .Values.persistence.size }}
   accessModes:
-    {{- toYaml .Values.persistence.accessModes | nindent 4 }}
+    - {{ .Values.persistence.accessMode }}
   hostPath:
     path: /data/nexus
+{{- end }}
