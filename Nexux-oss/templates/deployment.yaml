@@ -1,28 +1,36 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: nexus-oss
+  name: {{ include "nexus-oss.fullname" . }}
+  labels:
+    app: {{ include "nexus-oss.name" . }}
 spec:
   replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
-      app: nexus-oss
+      app: {{ include "nexus-oss.name" . }}
   template:
     metadata:
       labels:
-        app: nexus-oss
+        app: {{ include "nexus-oss.name" . }}
     spec:
       containers:
-      - name: nexus-oss
-        image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
-        ports:
-        - containerPort: 8081
-        resources:
-          {{- toYaml .Values.resources | nindent 10 }}
-        volumeMounts:
-        - mountPath: /nexus-data
-          name: nexus-data
+        - name: nexus
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - containerPort: {{ .Values.service.port }}
+          env:
+            - name: NEXUS_CONTEXT
+              value: "{{ .Values.nexus.contextPath }}"
+            - name: INSTALL4J_ADD_VM_PARAMS
+              value: "{{ .Values.nexus.javaOpts }}"
+          volumeMounts:
+            - name: nexus-data
+              mountPath: /nexus-data
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
       volumes:
-      - name: nexus-data
-        persistentVolumeClaim:
-          claimName: nexus-pvc
+        - name: nexus-data
+          persistentVolumeClaim:
+            claimName: {{ include "nexus-oss.fullname" . }}-pvc
